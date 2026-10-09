@@ -42,6 +42,25 @@ python3 bounty_radar.py --limit 15
 python3 bounty_radar.py --analyze https://github.com/BasedHardware/omi/issues/20461
 ```
 
+### 3. 作为 MCP Server 接入 AI 编辑器（Cursor / Claude Desktop / Antigravity）
+
+本项目原生支持 **Model Context Protocol (MCP)**。将以下配置加入到你的 `claude_desktop_config.json` 或 Cursor MCP 配置中：
+
+```json
+{
+  "mcpServers": {
+    "bounty-radar": {
+      "command": "python3",
+      "args": ["/Users/geir/Downloads/gewenbo/dogecon6/mcp_server.py"]
+    }
+  }
+}
+```
+
+接入后，你可直接在对话框中要求 AI：
+- *"扫描当前最少人竞争的开源美金工单"*
+- *"分析此 GitHub Issue 并生成手术刀修复方案"*
+
 ---
 
 ## 🛠️ 本地身份与 Git 隔离配置
@@ -65,6 +84,9 @@ git config user.email
 ```text
 dogecon6/
 ├── bounty_radar.py            # 全网悬赏扫描与打金辅助 CLI 引擎
+├── mcp_server.py              # Model Context Protocol (MCP) 标准服务接口
+├── safe_hunter.py             # 六重防封号门禁自检与合规 PR 生成器
+├── run_bounty_fix.py          # 首单 $50 修复补丁、单测与 PR/Bounty 提案全套脚本
 ├── README.md                  # 本项目使用说明与打金指南
 ├── PROFILE_README.md          # 专为 dogecon6-wq 定制的高端 GitHub Profile 主页模板
 └── docs/
