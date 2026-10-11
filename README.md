@@ -17,7 +17,12 @@
    - **BasedHardware/omi 等活跃 AI 开源硬件生态**：每个安全漏洞/边界加固/功能修复 PR 悬赏 **\$50 ~ \$100 USDC**，直接链上秒结。
    - **OnlyDust (onlydust.com)**：Web3 基金会官方开源打金平台，代码合并直接领 USDC。
 
-2. **手术刀式代码修复（Surgical Bug Fix）**：
+2. **Google 独立 AI 漏洞赏金（AI VRP - 第二主战场）**：
+   - **Google Bug Hunters 官方独立项目**：单漏洞基础 **\$20,000**，乘数上限 **\$30,000**。
+   - **核心战法**：间接提示词注入（S1: 未经确认执行敏感操作 / S2: 敏感邮件与私密文档外泄）。
+   - **优势**：纯报告制评审，无需等 maintainer 合入，直接兑现。详见 [Google AI VRP 实战手册](file:///Users/geir/Downloads/gewenbo/dogecon6/docs/GOOGLE_AI_VRP_PLAYBOOK.md)。
+
+3. **手术刀式代码修复（Surgical Bug Fix）**：
    - 寻找真实存在的系统缺陷（信息泄露、未捕获异常、显式空值数据库投毒、EXIF 敏感元数据泄露等）。
    - 只改 5~15 行核心代码，不碰任何无关结构。
    - 附带 3 组行为级单元测试（测试 1 必挂、测试 2 验证修复、测试 3 确保向后兼容）。
@@ -90,5 +95,6 @@ dogecon6/
 ├── README.md                  # 本项目使用说明与打金指南
 ├── PROFILE_README.md          # 专为 dogecon6-wq 定制的高端 GitHub Profile 主页模板
 └── docs/
-    └── PR_MERGE_PLAYBOOK.md   # 手术刀式 PR 与 100% 合并防封 SOP
+    ├── PR_MERGE_PLAYBOOK.md   # 手术刀式 PR 与 100% 合并防封 SOP
+    └── GOOGLE_AI_VRP_PLAYBOOK.md # Google AI VRP 间接提示词注入实战开工地图
 ```
