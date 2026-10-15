@@ -29,32 +29,36 @@ TARGET_DIFF = """--- a/backend/routers/conversations.py
      calendar_event = _event_to_calendar_event_link(event)
 """
 
-UNIT_TEST_CODE = '''"""Unit tests for conversations router calendar event linking exception sanitization.
+UNIT_TEST_CODE = '''\"\"\"Unit tests for conversations router calendar event linking exception sanitization.
 
 Verifies that internal Google Calendar provider errors and retry exceptions
-in link_calendar_event are masked and not leaked in HTTP 500 responses (CWE-209).
-"""
+in link_calendar_event are masked and not leaked in HTTP 500 response bodies (CWE-209).
+\"\"\"
 
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock
 from fastapi import HTTPException
 import pytest
 
 from routers import conversations as conv_routes
-from models.conversation import LinkCalendarEventRequest
 
 
 @pytest.mark.asyncio
 async def test_link_calendar_event_masks_provider_error(monkeypatch):
-    """Ensure link_calendar_event raises generic 500 without leaking raw provider error."""
-    fake_integration = {"access_token": "valid_token"}
+    \"\"\"Ensure link_calendar_event raises generic 500 without leaking raw provider error.\"\"\"
+    monkeypatch.setattr(
+        conv_routes, "_get_valid_conversation_by_id", lambda uid, conversation_id, **kw: {"id": conversation_id}
+    )
+    fake_integration = {"connected": True, "access_token": "valid_token"}
     monkeypatch.setattr(conv_routes.users_db, "get_integration", lambda uid, name: fake_integration)
     monkeypatch.setattr(
         conv_routes,
         "get_google_calendar_event",
-        AsyncMock(side_effect=RuntimeError("Google Calendar API socket connection reset by peer on internal.gcp:8443")),
+        AsyncMock(
+            side_effect=RuntimeError("Google Calendar API socket connection reset by peer on internal.gcp:8443")
+        ),
     )
 
-    req = LinkCalendarEventRequest(event_id="evt_test_123")
+    req = conv_routes.LinkCalendarEventRequest(event_id="evt_test_123")
     with pytest.raises(HTTPException) as exc_info:
         await conv_routes.link_calendar_event(
             conversation_id="conv_123",
@@ -69,8 +73,11 @@ async def test_link_calendar_event_masks_provider_error(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_link_calendar_event_masks_retry_error(monkeypatch):
-    """Ensure link_calendar_event masks retry failure after token refresh."""
-    fake_integration = {"access_token": "expired_token"}
+    \"\"\"Ensure link_calendar_event masks retry failure after token refresh.\"\"\"
+    monkeypatch.setattr(
+        conv_routes, "_get_valid_conversation_by_id", lambda uid, conversation_id, **kw: {"id": conversation_id}
+    )
+    fake_integration = {"connected": True, "access_token": "expired_token"}
     monkeypatch.setattr(conv_routes.users_db, "get_integration", lambda uid, name: fake_integration)
     monkeypatch.setattr(conv_routes, "refresh_google_token", AsyncMock(return_value="new_token"))
 
@@ -85,7 +92,7 @@ async def test_link_calendar_event_masks_retry_error(monkeypatch):
 
     monkeypatch.setattr(conv_routes, "get_google_calendar_event", mock_fetch_event)
 
-    req = LinkCalendarEventRequest(event_id="evt_test_123")
+    req = conv_routes.LinkCalendarEventRequest(event_id="evt_test_123")
     with pytest.raises(HTTPException) as exc_info:
         await conv_routes.link_calendar_event(
             conversation_id="conv_123",
